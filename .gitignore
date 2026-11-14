@@ -1,0 +1,9 @@
+# Never publish the signing key: anyone holding it could ship updates that install over PDF+.
+pdfplus-release.jks
+signing.properties
+local.properties
+.gradle/
+.kotlin/
+build/
+app/build/
+*.apk
