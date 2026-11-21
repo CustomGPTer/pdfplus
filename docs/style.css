@@ -269,3 +269,6 @@ ul,ol{margin:0;padding:0;list-style:none}
 }
 @media (max-width:376px){.top nav a.more-apps svg{display:none}.top nav a.more-apps{padding:6px 12px}}
 /* ---------- end of more apps, and fixes for phones */
+
+.mapp-go a.button{background:#1f5fa8;color:#fff;text-decoration:none}
+.mapp-go a.button.ghost{background:transparent;color:#1f5fa8}
