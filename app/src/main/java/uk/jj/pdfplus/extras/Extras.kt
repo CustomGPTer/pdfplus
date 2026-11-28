@@ -236,7 +236,7 @@ object Ai {
 // ---------------- New-version check ----------------
 
 object Updates {
-    /** The public repository whose latest release is treated as the newest version. */
+    /** The public repository that holds PDF+'s source code (AGPL). New versions are found on torusapps.com. */
     const val REPO = "CustomGPTer/pdfplus"
 
     class Release(val version: String, val pageUrl: String, val apkUrl: String, val notes: String)
@@ -251,17 +251,10 @@ object Updates {
 
     suspend fun check(): Release? = withContext(Dispatchers.IO) {
         runCatching {
-            val c = URL("https://api.github.com/repos/$REPO/releases/latest").openConnection() as HttpURLConnection
-            c.connectTimeout = 10000; c.readTimeout = 10000
-            c.setRequestProperty("Accept", "application/vnd.github+json")
-            if (c.responseCode != 200) return@runCatching null
-            val j = JSONObject(c.inputStream.bufferedReader().use { it.readText() })
-            val tag = j.optString("tag_name")
+            // torusapps.com's signed catalogue holds the newest version; its page has the download.
+            val tag = uk.jj.pdfplus.TorusLinks.latestVersionNow() ?: return@runCatching null
             if (!isNewer(tag, BuildConfig.VERSION_NAME)) return@runCatching null
-            val assets = j.optJSONArray("assets")
-            var apk = ""
-            if (assets != null) for (i in 0 until assets.length()) { val a = assets.getJSONObject(i); if (a.optString("name").endsWith(".apk")) apk = a.optString("browser_download_url") }
-            Release(tag.removePrefix("v"), j.optString("html_url"), apk, j.optString("body").take(1200))
+            Release(tag, uk.jj.pdfplus.TorusLinks.PAGE, "", "")
         }.getOrNull()
     }
 }

@@ -123,12 +123,18 @@ fun SettingsTab(onAuthenticate: (String, () -> Unit) -> Unit, onUpdate: (Updates
         }
 
         SectionTitle("Updates")
-        Toggle("Tell me about new versions", "Checks the PDF+ release page about once a day. Nothing is installed without you.", p.updateCheck) { p.updateCheck = it }
+        Toggle("Tell me about new versions", "Checks torusapps.com about once a day. Nothing is installed without you.", p.updateCheck) { p.updateCheck = it }
         Line("Version ${BuildConfig.VERSION_NAME}", "", "Check now") {
-            scope.launch { val r = Updates.check(); if (r != null) onUpdate(r) else ctx.toast("You have the latest version, or the release page could not be reached.") }
+            scope.launch { val r = Updates.check(); if (r != null) onUpdate(r) else ctx.toast("You have the latest version, or torusapps.com could not be reached.") }
         }
 
         SectionTitle("About")
+        Line("PDF+ ${BuildConfig.VERSION_NAME}", uk.jj.pdfplus.TorusLinks.DEVELOPER)
+        Line("Website", "torusapps.com/pdfplus", "Open") { ctx.openUrl(uk.jj.pdfplus.TorusLinks.PAGE) }
+        Line("More apps", "Other free apps by the same developer", "Open") { ctx.openUrl(uk.jj.pdfplus.TorusLinks.HOME) }
+        Line("Privacy policy", "torusapps.com/privacy", "Open") { ctx.openUrl(uk.jj.pdfplus.TorusLinks.PRIVACY) }
+        Line("Email", uk.jj.pdfplus.TorusLinks.EMAIL, "Write") { ctx.openUrl("mailto:" + uk.jj.pdfplus.TorusLinks.EMAIL) }
+        Line("Source code", "github.com/${Updates.REPO}", "Open") { ctx.openUrl("https://github.com/${Updates.REPO}") }
         Text(
             "PDF+ is free software released under the GNU Affero General Public License, version 3. Its source code is published at github.com/${Updates.REPO}.\n\n" +
                 "It is built on MuPDF by Artifex Software (AGPL v3), Bouncy Castle (MIT licence), Google ML Kit and the Android Jetpack libraries (Apache 2.0).\n\n" +

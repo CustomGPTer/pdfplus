@@ -78,7 +78,19 @@ class MainActivity : FragmentActivity() {
         speaker = Speaker(this, App.instance.scope)
         locked = App.prefs.appLock
         if (savedInstanceState == null) handleIntent(intent)
-        setContent { PdfPlusTheme { Root() } }
+        val first = savedInstanceState == null
+        setContent {
+            PdfPlusTheme {
+                var opening by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(first) }
+                Root()
+                if (opening) OpeningScreen(
+                    name = "PDF+", tagline = "Read, mark up and sign PDFs",
+                    background = MaterialTheme.colorScheme.background, ink = MaterialTheme.colorScheme.onBackground,
+                    accent = MaterialTheme.colorScheme.primary, iconBackground = androidx.compose.ui.graphics.Color(0xFF1F5FA8),
+                    onFinished = { opening = false },
+                )
+            }
+        }
         if (locked) unlock()
         maybeCheckUpdate()
     }
@@ -156,9 +168,9 @@ class MainActivity : FragmentActivity() {
             }
         }
         update?.let { r ->
-            AlertDialog(onDismissRequest = { update = null }, title = { Text("PDF+ ${r.version} is available") },
-                text = { Text(r.notes.ifBlank { "A newer version is ready to download." } + "\n\nThe download opens in your browser. Install it over the top and your settings are kept.") },
-                confirmButton = { TextButton(onClick = { update = null; openUrl(r.apkUrl.ifBlank { r.pageUrl }) }) { Text("Download") } },
+            AlertDialog(onDismissRequest = { update = null }, title = { Text("Update available") },
+                text = { Text(r.notes.ifBlank { "PDF+ ${r.version} is out." } + "\n\nIts page on torusapps.com opens in your browser. Install it over the top and your settings are kept.") },
+                confirmButton = { TextButton(onClick = { update = null; openUrl(r.apkUrl.ifBlank { r.pageUrl }) }) { Text("Open page") } },
                 dismissButton = { Row { TextButton(onClick = { App.prefs.set("skippedVersion", r.version); update = null }) { Text("Skip this version") }; TextButton(onClick = { update = null }) { Text("Later") } } })
         }
     }
